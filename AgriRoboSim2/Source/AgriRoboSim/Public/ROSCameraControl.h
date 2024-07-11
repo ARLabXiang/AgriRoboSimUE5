@@ -96,6 +96,7 @@ private:
 	int ROSStepMultiplier;
 	TSharedPtr<ROSMessages::sensor_msgs::Image> ImageMSG;
 	std::shared_ptr<uint8[]> img;
+	ROSMessages::std_msgs::Header msg_header;
 };
 
 

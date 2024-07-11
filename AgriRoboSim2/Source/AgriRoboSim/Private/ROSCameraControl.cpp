@@ -21,7 +21,7 @@ void FROSSceneCapture::RefreshImageTopicSize()
 		SceneCapture->TextureTarget->SizeY *
 		ROSStepMultiplier);
 	ImageMSG->data = img.get();
-	//ImageMSG->header = ROSMessages::std_msgs::Header(0,FROSTime(0,0),"map");
+	ImageMSG->header = ROSMessages::std_msgs::Header(0,FROSTime(0,0).Now(),"map");
 	ImageMSG->width = SceneCapture->TextureTarget->SizeX;
 	ImageMSG->height = SceneCapture->TextureTarget->SizeY;
 	ImageMSG->is_bigendian = false;
@@ -87,6 +87,7 @@ bool FROSSceneCapture::UpdateImageMsg(TArray<T>* Image, uint8* data)
 		UE_LOG(LogTemp, Log, TEXT("no image msg"))
 		return false;
 	}
+	ImageMSG->header.time = FROSTime().Now();
 	CheckROSEncoding();
 	if constexpr (std::is_same_v<T, FColor>)
 	{

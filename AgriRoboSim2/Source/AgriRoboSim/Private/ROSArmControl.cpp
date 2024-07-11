@@ -165,6 +165,15 @@ void UROSArmControl::SetJointsTargets()
 			*RJointNames[JointTopicOrder[i]],
 			*RobotJoints[RobotJointMapping[i]].Get()->JointName.ToString(),
 			RJointPosition[JointTopicOrder[i]])
+		/*FVector currentLinearForce;
+		FVector currentAngularForce;
+		auto currentLocation1 = RobotJoints[RobotJointMapping[i]].Get()->GetConstraintLocation();
+		auto currentLocation2 = RobotJoints[RobotJointMapping[i]].Get()->GetConstraintLocation();
+		RobotJoints[RobotJointMapping[i]].Get()->GetConstraintForce(currentLinearForce, currentAngularForce);
+		UE_LOG(LogTemp, Log, TEXT("%s | %s"),
+			*currentLocation1.ToString(),
+			*currentLocation2.ToString()
+		)*/
 		FQuat target = FQuat::MakeFromEuler(FVector(RJointPosition[JointTopicOrder[i]]*180.0f/PI,0,0));
 		RobotJoints[RobotJointMapping[i]].Get()->SetAngularOrientationTarget(target);
 	}
