@@ -44,9 +44,9 @@ void USceneInfoGameStateCompoenent::AddEntryPair(FString Head, FString Body)
 void USceneInfoGameStateCompoenent::Load()
 {
 	GameInfoMSG->_Data.Reset();
-	GameInfoMSG->_Data.Append(FString::Join(Header,_T(",")));
+	GameInfoMSG->_Data.Append(FString::Join(Header,_T("||")));
 	GameInfoMSG->_Data.Append(_T("\n"));
-	GameInfoMSG->_Data.Append(FString::Join(Information,_T(",")));
+	GameInfoMSG->_Data.Append(FString::Join(Information,_T("||")));
 }
 
 void USceneInfoGameStateCompoenent::Publish()

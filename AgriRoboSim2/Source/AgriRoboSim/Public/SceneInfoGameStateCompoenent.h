@@ -39,6 +39,7 @@ public:
 	void Publish();
 	UFUNCTION(BlueprintCallable)
 	void RequestAppend();
+	UFUNCTION(BlueprintCallable)
 	void RequestNew();
 	UFUNCTION(BlueprintCallable)
 	void LoadPublish();
