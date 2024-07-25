@@ -360,7 +360,7 @@ UTextureRenderTarget2D* UROSCameraControl::CreateRenderTarget(
 	
 	NewRenderTarget2D->SRGB = false;
 	NewRenderTarget2D->bGPUSharedFlag = true;
-	NewRenderTarget2D->TargetGamma = 2.5;
+	NewRenderTarget2D->TargetGamma = 0.0;
 	NewRenderTarget2D->UpdateResourceImmediate(true);
 	return NewRenderTarget2D; 
 }
