@@ -59,6 +59,13 @@ private:
 	TArray<int8> RobotJointMapping;
 	UFUNCTION(BlueprintCallable)
 	void SetJointsTargets();
+
+	UPROPERTY()
+	UTopic* PlatformTransformsTopic;
+	std::function<void(TSharedPtr<FROSBaseMsg>)> PlatformRobot_SubscribeCallback;
+	UPROPERTY()
+	bool bFollowPlatformTopic;
+	FTransform PlatformTransform;
 };
 
 template <typename T>

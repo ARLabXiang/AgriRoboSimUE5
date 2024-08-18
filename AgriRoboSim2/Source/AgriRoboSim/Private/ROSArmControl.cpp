@@ -4,6 +4,8 @@
 #include "ROSArmControl.h"
 #include "PhysicsEngine/ConstraintInstance.h"
 #include "sensor_msgs/JointState.h"
+#include "geometry_msgs/Transform.h"
+
 void UROSArmControl::InitRobotArm(USkeletalMeshComponent* arm, FName JointProfileName, FName JointCommonBoneName)
 {
 	RobotArm = arm;
@@ -68,38 +70,40 @@ void UROSArmControl::BeginPlay()
 		auto Concrete = StaticCastSharedPtr<ROSMessages::sensor_msgs::JointState>(msg);
 		if (Concrete.IsValid())
 		{
-			//UE_LOG(LogTemp, Log, TEXT("received joint message"));
-			/*if (_pos->Num() < Concrete->position.Num())
-			{
-				_pos->Reserve(Concrete->position.Num());
-			}
-			for (int i = 0; i < Concrete->position.Num(); i++)
-			{
-				if (i < _pos->Num())
-				{
-					(*_pos)[i] = (Concrete->position)[i];
-				} else
-				{
-					_pos->Add(Concrete->position[i]);
-				}
-			}
-			if (_pos->Num() > Concrete->position.Num())
-			{
-				_pos->RemoveAt(Concrete->position.Num(), _pos->Num() - Concrete->position.Num());
-			}*/
-			//_vel->Reset();
 			R2S_TArray_Helper(Concrete->position, _pos);
 			R2S_TArray_Helper(Concrete->name, _name);
-			//R2S_Helper(Concrete->position, _pos);
-			//R2S_Helper(Concrete->name, _name);
-			//_name->Reset();
-			// _pos->Append(Concrete->position);
-			//_vel->Append(Concrete->velocity);
-			//_name->Append(Concrete->name);
 		}
 	};
 	R2S_JointState_Topic->Subscribe(JointState_SubscribeCallback);
 
+	PlatformTransformsTopic = NewObject<UTopic>(UTopic::StaticClass());
+	PlatformTransformsTopic->Init(rosinst->ROSIntegrationCore, TEXT("/planar_robot_tf"), TEXT("geometry_msgs/Transform"));
+	PlatformRobot_SubscribeCallback = [_transform = &PlatformTransform, _enabled = &bFollowPlatformTopic](TSharedPtr<FROSBaseMsg> msg) -> void
+	{
+		auto Concrete = StaticCastSharedPtr<ROSMessages::geometry_msgs::Transform>(msg);
+		if (Concrete.IsValid())
+		{
+			*_enabled = true;
+			_transform->SetLocation(
+				FVector(
+					100 * Concrete->translation.x,
+					100 * Concrete->translation.y,
+					100 * Concrete->translation.z
+				)
+			);
+			_transform->SetRotation(
+				FQuat(
+					Concrete->rotation.x,
+					Concrete->rotation.y,
+					Concrete->rotation.z,
+					Concrete->rotation.w
+				)
+			);
+
+			
+		}
+	};
+	PlatformTransformsTopic->Subscribe(PlatformRobot_SubscribeCallback);
 	
 }
 
@@ -147,6 +151,10 @@ void UROSArmControl::SetJointsTargets()
 		return;
 	}
 	RobotArm->WakeAllRigidBodies();
+	if (bFollowPlatformTopic)
+	{
+		RobotArm->SetWorldTransform(PlatformTransform, false,nullptr,ETeleportType::TeleportPhysics);
+	}
 	for (int i = 0; i < _RobotJointMappingNum; i++)
 	{
 		if (i >= JointTopicOrder.Num() || i >= RobotJointMapping.Num())
