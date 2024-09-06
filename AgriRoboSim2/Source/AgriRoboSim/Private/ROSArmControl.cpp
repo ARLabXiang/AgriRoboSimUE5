@@ -169,10 +169,10 @@ void UROSArmControl::SetJointsTargets()
 			UE_LOG(LogTemp, Log, TEXT("setjointtarget exceeds after checks"))
 			return;
 		}
-		UE_LOG(LogTemp, Log, TEXT("%s | %s : %f"),
-			*RJointNames[JointTopicOrder[i]],
-			*RobotJoints[RobotJointMapping[i]].Get()->JointName.ToString(),
-			RJointPosition[JointTopicOrder[i]])
+		// UE_LOG(LogTemp, Log, TEXT("%s | %s : %f"),
+		// 	*RJointNames[JointTopicOrder[i]],
+		// 	*RobotJoints[RobotJointMapping[i]].Get()->JointName.ToString(),
+		// 	RJointPosition[JointTopicOrder[i]])
 		/*FVector currentLinearForce;
 		FVector currentAngularForce;
 		auto currentLocation1 = RobotJoints[RobotJointMapping[i]].Get()->GetConstraintLocation();
