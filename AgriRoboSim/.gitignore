@@ -82,3 +82,6 @@ ThirdParty/OpenCV/*
 # Other Assets
 Content/GoodSky/*
 Content/Tomatos/*
+
+# Pixelstreaming sample
+Samples/*
