@@ -32,7 +32,7 @@ TMap<FString, FString> USceneCommandGameStateCompoenent::ReadEntryPairsFromLastM
 	{
 		TArray<FString> cmds;
 		game_command.ParseIntoArray(cmds, TEXT(":"),false);
-		GEngine->AddOnScreenDebugMessage(-1,30.0f,FColor::Yellow,TEXT("Process Game Cmd"));
+		GEngine->AddOnScreenDebugMessage(5,30.0f,FColor::Yellow,TEXT("Process Game Cmd"));
 		if (cmds.Num() > 0 && cmds.Num() % 2 == 0)
 		{
 			for (int i = 0; i < cmds.Num(); i += 2)
@@ -42,7 +42,7 @@ TMap<FString, FString> USceneCommandGameStateCompoenent::ReadEntryPairsFromLastM
 		}
 		else
 		{
-			GEngine->AddOnScreenDebugMessage(-1,30.0f,FColor::Red,TEXT("Incorrect Game Cmd Format"));
+			GEngine->AddOnScreenDebugMessage(6,30.0f,FColor::Red,TEXT("Incorrect Game Cmd Format"));
 			// unexpected command packet
 		}
 		game_command = FString("");

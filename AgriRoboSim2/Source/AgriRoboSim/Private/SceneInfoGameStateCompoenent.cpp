@@ -18,7 +18,8 @@ USceneInfoGameStateCompoenent::USceneInfoGameStateCompoenent()
 void USceneInfoGameStateCompoenent::BeginPlay()
 {
 	Super::BeginPlay();
-	GameInfoMSG = MakeShareable(new ROSMessages::std_msgs::String());
+	StaticGameInfoMSG = MakeShareable(new ROSMessages::std_msgs::String());
+	PeriodGameInfoMSG = MakeShareable(new ROSMessages::std_msgs::String());
 	GameInfoTopic = NewObject<UTopic>(UTopic::StaticClass());
 	GameInfoTopic->Init(rosinst->ROSIntegrationCore, TEXT("/ue5/SceneInfo"), TEXT("std_msgs/String"));
 	GameInfoTopic->Advertise();
@@ -35,48 +36,55 @@ void USceneInfoGameStateCompoenent::TickComponent(float DeltaTime, ELevelTick Ti
 	// ...
 }
 
-void USceneInfoGameStateCompoenent::AddEntryPair(FString Head, FString Body)
+void USceneInfoGameStateCompoenent::AddStaticEntryPair(FString Head, FString Body)
 {
-	Header.Add(Head);
-	Information.Add(Body);
+	StaticHeader.Add(Head);
+	StaticInformation.Add(Body);
 }
 
-void USceneInfoGameStateCompoenent::Load()
+void USceneInfoGameStateCompoenent::AddPeriodEntryPair(FString Head, FString Body)
 {
-	GameInfoMSG->_Data.Reset();
-	GameInfoMSG->_Data.Append(FString::Join(Header,_T("||")));
-	GameInfoMSG->_Data.Append(_T("\n"));
-	GameInfoMSG->_Data.Append(FString::Join(Information,_T("||")));
+	PeriodHeader.Add(Head);
+	PeriodInformation.Add(Body);
 }
 
-void USceneInfoGameStateCompoenent::Publish()
+void USceneInfoGameStateCompoenent::RequestStaticNew()
 {
-	GameInfoTopic->Publish(GameInfoMSG);
+	StaticHeader.Reset();
+	StaticInformation.Reset();
+	AddStaticEntryPair("level-static", GetWorld()->GetMapName());
+}
+void USceneInfoGameStateCompoenent::RequestPeriodNew()
+{
+	PeriodHeader.Reset();
+	PeriodInformation.Reset();
+	AddPeriodEntryPair("level-period", GetWorld()->GetMapName());
 }
 
-void USceneInfoGameStateCompoenent::RequestAppend()
+void USceneInfoGameStateCompoenent::LoadStaticPublish()
 {
-	AddEntryPair("level", GetWorld()->GetMapName());
-}
+	StaticGameInfoMSG->_Data.Reset();
+	StaticGameInfoMSG->_Data.Append(FString::Join(StaticHeader,_T("||")));
+	StaticGameInfoMSG->_Data.Append(_T("\n"));
+	StaticGameInfoMSG->_Data.Append(FString::Join(StaticInformation,_T("||")));
 
-void USceneInfoGameStateCompoenent::RequestNew()
-{
-	Header.Reset();
-	Information.Reset();
-	RequestAppend();
+	GameInfoTopic->Publish(StaticGameInfoMSG);
 }
+void USceneInfoGameStateCompoenent::LoadPeriodPublish()
+{
+	PeriodGameInfoMSG->_Data.Reset();
+	PeriodGameInfoMSG->_Data.Append(FString::Join(PeriodHeader,_T("||")));
+	PeriodGameInfoMSG->_Data.Append(_T("\n"));
+	PeriodGameInfoMSG->_Data.Append(FString::Join(PeriodInformation,_T("||")));
 
-void USceneInfoGameStateCompoenent::LoadPublish()
-{
-	Load();
-	Publish();
+	GameInfoTopic->Publish(PeriodGameInfoMSG);
 }
-
-void USceneInfoGameStateCompoenent::RequestNewLoadPublish()
-{
-	RequestNew();
-	LoadPublish();
-}
+//
+// void USceneInfoGameStateCompoenent::RequestNewLoadPublish()
+// {
+// 	RequestNew();
+// 	LoadPublish();
+// }
 
 
 

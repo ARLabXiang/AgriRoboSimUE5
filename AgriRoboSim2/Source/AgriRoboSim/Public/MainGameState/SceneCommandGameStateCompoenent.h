@@ -24,6 +24,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TMap<FString, FString> ReadEntryPairsFromLastMSG();
 
+    UPROPERTY(BlueprintReadWrite)
 	FString game_command;
 
 protected:

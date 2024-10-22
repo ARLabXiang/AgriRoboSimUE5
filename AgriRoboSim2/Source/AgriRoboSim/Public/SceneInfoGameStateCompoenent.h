@@ -20,7 +20,8 @@ public:
 	USceneInfoGameStateCompoenent();
 	UPROPERTY()
 	UTopic* GameInfoTopic;
-	TSharedPtr<ROSMessages::std_msgs::String> GameInfoMSG;
+	TSharedPtr<ROSMessages::std_msgs::String> StaticGameInfoMSG;
+	TSharedPtr<ROSMessages::std_msgs::String> PeriodGameInfoMSG;
 	
 protected:
 	// Called when the game starts
@@ -29,20 +30,22 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
+	TArray<FString> StaticHeader;
+	TArray<FString> StaticInformation;
+	TArray<FString> PeriodHeader;
+	TArray<FString> PeriodInformation;
+	UFUNCTION(BlueprintCallable)
+	void AddStaticEntryPair(FString Head, FString Body);
+	UFUNCTION(BlueprintCallable)
+	void AddPeriodEntryPair(FString Head, FString Body);
 
-	TArray<FString> Header;
-	TArray<FString> Information;
 	UFUNCTION(BlueprintCallable)
-	void AddEntryPair(FString Head, FString Body);
-	void Load();
+	void RequestStaticNew();
 	UFUNCTION(BlueprintCallable)
-	void Publish();
+	void RequestPeriodNew();
 	UFUNCTION(BlueprintCallable)
-	void RequestAppend();
+	void LoadStaticPublish();
 	UFUNCTION(BlueprintCallable)
-	void RequestNew();
-	UFUNCTION(BlueprintCallable)
-	void LoadPublish();
-	UFUNCTION(BlueprintCallable)
-	void RequestNewLoadPublish();
+	void LoadPeriodPublish();
 };

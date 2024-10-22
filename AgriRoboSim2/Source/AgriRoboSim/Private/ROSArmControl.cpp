@@ -132,7 +132,13 @@ void UROSArmControl::SetJointsTargets()
 		_RobotJointMappingNum != JointTopicOrder.Num()
 		)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Joint Count Mismatch, %d, %d, %d"),RobotJointMapping.Num(), RJointPosition.Num(), RJointNames.Num())
+		//UE_LOG(LogTemp, Log, TEXT("Joint Count Mismatch, %d, %d, %d"),RobotJointMapping.Num(), RJointPosition.Num(), RJointNames.Num())
+		RobotArm->WakeAllRigidBodies();
+        if (bFollowPlatformTopic)
+        {
+            //UE_LOG(LogTemp, Log, TEXT("Setting Platform Transform"))
+            RobotArm->SetWorldTransform(PlatformTransform, false,nullptr,ETeleportType::TeleportPhysics);
+        }
 		return;
 	}
 	int maxMappingValue = 0;
