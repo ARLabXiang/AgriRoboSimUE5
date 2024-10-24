@@ -19,6 +19,7 @@ void UROSCameraControl::InitROSTopics(
 	UCameraComponent* CameraModel, int Width, int Height)
 {
 	SceneCaptures.Empty();
+	if (!rosinst->ROSIntegrationCore) {return;}
 	for (auto Element : CameraTypePair)
 	{
 		InitSceneCapture(Element.Key, Element.Value);
@@ -30,6 +31,7 @@ void UROSCameraControl::InitROSTopics(
 void UROSCameraControl::InitSceneCaptures()
 {
 	SceneCaptures.Empty();
+	if (!rosinst->ROSIntegrationCore) {return;}
 	TArray<USceneCaptureComponent2D*> L_SceneCaptures;
 	this->GetOwner()->GetComponents<USceneCaptureComponent2D>(L_SceneCaptures);
 	for (int i = 0; i < L_SceneCaptures.Num(); ++i)

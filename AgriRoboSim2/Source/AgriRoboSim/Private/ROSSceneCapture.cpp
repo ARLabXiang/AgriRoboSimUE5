@@ -45,6 +45,7 @@ void UROSSceneCapture::Initialize(
 {
 	topic_name = topic_name_;
 	UE_LOG(LogTemp, Log, TEXT("A %s"),*topic_name)
+	if (!rosinst->ROSIntegrationCore) {return;}
 	Topic = NewObject<UTopic>(UTopic::StaticClass());
 	Topic->Init(rosinst->ROSIntegrationCore, topic_name, TEXT("sensor_msgs/Image"));
 	Topic->Advertise();
@@ -122,7 +123,7 @@ void UROSSceneCapture::Publish()
 template<typename T>
 void UROSSceneCapture::Publish(TArray<T>* Image)
 {
-	if (UpdateImageMsg(Image, img.get()))
+	if (UpdateImageMsg(Image, img.get()) && Topic)
 	{
 		//UE_LOG(LogTemp, Log, TEXT("publishing, %d, %p, %d"), Image->Num(), img.get(), img.get()!=nullptr)
 		Topic->Publish(ImageMSG);
@@ -266,7 +267,9 @@ void UROSSceneCapture::UpdateSceneCaptureCameraParameters(
 		)
 {
 	FMinimalViewInfo MinimalViewInfo;
+	if (!Camera) {return;}
 	Camera->GetCameraView(0.0, MinimalViewInfo);
+	
 	SceneCapture->FOVAngle = MinimalViewInfo.FOV;
 	SceneCapture->PostProcessSettings = MinimalViewInfo.PostProcessSettings;
 	SceneCapture->PostProcessBlendWeight = MinimalViewInfo.PostProcessBlendWeight;

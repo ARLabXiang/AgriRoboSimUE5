@@ -20,6 +20,10 @@ void USceneInfoGameStateCompoenent::BeginPlay()
 	Super::BeginPlay();
 	StaticGameInfoMSG = MakeShareable(new ROSMessages::std_msgs::String());
 	PeriodGameInfoMSG = MakeShareable(new ROSMessages::std_msgs::String());
+	if (!rosinst->ROSIntegrationCore)
+    {
+    	return;
+    }
 	GameInfoTopic = NewObject<UTopic>(UTopic::StaticClass());
 	GameInfoTopic->Init(rosinst->ROSIntegrationCore, TEXT("/ue5/SceneInfo"), TEXT("std_msgs/String"));
 	GameInfoTopic->Advertise();
@@ -67,7 +71,11 @@ void USceneInfoGameStateCompoenent::LoadStaticPublish()
 	StaticGameInfoMSG->_Data.Append(FString::Join(StaticHeader,_T("||")));
 	StaticGameInfoMSG->_Data.Append(_T("\n"));
 	StaticGameInfoMSG->_Data.Append(FString::Join(StaticInformation,_T("||")));
-
+	if(!GameInfoTopic)
+	{
+		return;
+	}
+	
 	GameInfoTopic->Publish(StaticGameInfoMSG);
 }
 void USceneInfoGameStateCompoenent::LoadPeriodPublish()
@@ -76,7 +84,10 @@ void USceneInfoGameStateCompoenent::LoadPeriodPublish()
 	PeriodGameInfoMSG->_Data.Append(FString::Join(PeriodHeader,_T("||")));
 	PeriodGameInfoMSG->_Data.Append(_T("\n"));
 	PeriodGameInfoMSG->_Data.Append(FString::Join(PeriodInformation,_T("||")));
-
+	if(!GameInfoTopic)
+	{
+		return;
+	}
 	GameInfoTopic->Publish(PeriodGameInfoMSG);
 }
 //

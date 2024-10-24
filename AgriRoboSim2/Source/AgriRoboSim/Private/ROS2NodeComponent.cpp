@@ -33,9 +33,10 @@ void UROS2NodeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 void UROS2NodeComponent::RegisterGameInstance()
 {
 	rosinst = Cast<UROSIntegrationGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	/*for (auto Element : rosinst->ConnectedToROSBridge)
+	UE_LOG(LogTemp, Log, TEXT("%p %d %p"), rosinst, rosinst->NumROSBridgeServers, rosinst->ROSIntegrationCore);
+	for (auto Element : rosinst->ConnectedToROSBridge)
 	{
-		UE_LOG(LogTemp, Log, TEXT("%d"),Element)
-	}*/
+		UE_LOG(LogTemp, Log, TEXT("%d"),Element);
+	}
 }
 

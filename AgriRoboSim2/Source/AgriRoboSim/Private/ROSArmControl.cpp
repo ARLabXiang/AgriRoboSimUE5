@@ -61,7 +61,7 @@ void UROSArmControl::BeginPlay()
 {
 	Super::BeginPlay();
 	RJointPosition.Init(10,0);
-	
+	if (!rosinst->ROSIntegrationCore) {return;}
 	R2S_JointState_Topic = NewObject<UTopic>(UTopic::StaticClass());
 	R2S_JointState_Topic->Init(rosinst->ROSIntegrationCore, TEXT("/joint_states"), TEXT("sensor_msgs/JointState"));
 	// ...

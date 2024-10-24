@@ -58,6 +58,7 @@ void USceneCommandGameStateCompoenent::BeginPlay()
 
 	// ...
 	game_command = FString("");
+	if (!rosinst->ROSIntegrationCore){return;}
 	GameCommandTopic = NewObject<UTopic>(UTopic::StaticClass());
 	GameCommandTopic->Init(rosinst->ROSIntegrationCore, TEXT("/ue5/game_commands"), TEXT("std_msgs/String"));	
 
