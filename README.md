@@ -1,42 +1,37 @@
 # Unreal Engine 5 Agricultural Robot Simulation
 
-This repo host the Unreal Engine 5 part for the simulation, there is a seperate [ROS repo](https://github.com/NCSU-BAE-ARLab/AgriRoboSim_ROS) that work along side this simulation. 
+This repo host the Unreal Engine 5 part for the simulation, there is a seperate [ROS2 repo](https://github.com/XingjianL/UE5Sim_colcon_ws) that work along side this simulation. 
 
-[poster](https://drive.google.com/file/d/1NSpDXXA8XAvhLl7YAn9lH2GgQGdDXhRv/view?usp=drivesdk)
+`AgriRoboSim2` contains the current project in development using UE5.4.
 
+*Important*: Most assets are not part of this repository. Send `xli228@ncsu.edu` an email for the processed PlantVillage Dataset images. The tomato mesh were purchased and we cannot redistribute per license.
 
+If you want to use the available synthetic images you can download them on [HuggingFace (compressed to 160GB)](https://huggingface.co/datasets/XingjianLi/tomatotest). Or original images on [Globus (750GB)](https://app.globus.org/file-manager?origin_id=2f7f6170-8d5c-11e9-8e6a-029d279f7e24&origin_path=%2Frsstu%2Fusers%2Fl%2Flxiang3%2FTomatoDiseasePhenotyping%2F). The quality difference is not much as detailed on HuggingFace.
 
-`AgriRoboSim` contains the current project in development using UE5.3.
-
-`Test2` contains UE5.1 version (outdated). `Test2 5.2` contains UE5.2 version (outdated).
-
-*Important*: The Megascans assets (materials and plants) are not part of this repo, so you need to download those later from UE5 or the scenes will have missing high-quality plants and textures.
+If you have particular request on the types of images (for non-commercial and non-generative AI uses) feel free to ask us.
 
 ## Usage (.exe), Recommended
 
-The packaged application cannot be uploaded under Github release because it is greater than 2GB.
+The packaged application cannot be uploaded under Github release because it is approximately 4GB.
 
-The simplest way to use is by downloading the packaged "game" (2.8 GB after unzip) through Mediafire linked below, only windows build for now: [https://www.mediafire.com/file/fq5qipsuocxgbdz/AgriculturalRobotSimulation_UE5Build.7z/file](https://www.mediafire.com/file/fq5qipsuocxgbdz/AgriculturalRobotSimulation_UE5Build.7z/file)
+[The packaged simulation here on Globus (Windows, 4GB)](https://app.globus.org/file-manager?origin_id=2f7f6170-8d5c-11e9-8e6a-029d279f7e24&origin_path=%2Frsstu%2Fusers%2Fl%2Flxiang3%2FTomatoDiseasePhenotyping%2FSimulator%28Windows%29%2F)
 
-Or OneDrive link because Mediafire can be slow: [https://1drv.ms/u/s!AuM5Q-daepZAitkkKQ_B1UWMQq_jvw?e=QrW16N](https://1drv.ms/u/s!AuM5Q-daepZAitkkKQ_B1UWMQq_jvw?e=QrW16N)
+To control it using ROS2, I recommend installing Windows Subsystem for Linux (WSL) Ubuntu 22.04. The specific ROS2 package is [here: tomato_xarm6](https://github.com/XingjianL/UE5Sim_colcon_ws). You will need to install further packages for ROS2.
 
-To control it using ROS, I recommend installing Windows Subsystem for Linux (WSL) Ubuntu 20.04. Then follow instructions of this repo for ROS packages [https://github.com/NCSU-BAE-ARLab/AgriRoboSim_ROS](https://github.com/NCSU-BAE-ARLab/AgriRoboSim_ROS).
+Note: I recommend launch ROS2 first before launching UE5 simulation for successful connection.
 
 ## Usage (UE5 editor)
-This is tested on a windows 11 desktop, the UE5 simulation runs in Windows, the ROS part runs in WSL with rosbridge for communications (see separate repo for usage).
+Note: The repository do not contain most plant assets or materials because licenses and storage.
 
-Note: The repository do not contain plant assets or materials because they are from Quixel and take a lot of storage.
-
-1. Clone repo in file manager and navigate to `Plugin` folder inside `Test2` or `Test2 5.2`
-2. Clone [ROSIntegration repo](https://github.com/code-iai/ROSIntegration) in `Plugin` folder under the cloned repo
-3. Launch UE5.3 in the Launcher
-4. `Browse` and select the `AgriRoboSim.uproject` to open the project
+1. Clone repo in file manager and navigate to `Plugin` folder inside `AgriRoboSim2`
+2. run `git submodule update --init --recursive` to grab the ROSIntegration plugin
+3. Launch UE5.4 in the Launcher
+4. `Browse` and select the `AgriRoboSim2.uproject` to open the project
 5. Accept the prompt to rebuild now (wait for several minutes)
-6. The project should open, the default level is `2-robot_plant_vis`, it should contain two ur10 arms and a room with missing textures.
-7. Before fixing plants and textures, you might want to change settings for ROS communications by editing the `ROS_UR10e` blueprint under `ur10e` folder. For specifics see [ROSIntegration](https://github.com/code-iai/ROSIntegration), but I left it to use WebSockets over localhost.
-8.  To fill the textures, go to Quixel Megascans to download some materials and plants by `Window -> Quixel Bridge` at the top of the editor.
-9.  To segment the plant, navigate to Content/Assets/Plants and add entry in `PlantCollection_DT` and you can switch the plant by the `Change Plant` function during play.
-10. The simulation can be run alone, but to control the arm and capture images, I recommend using the [ROS part of the repo](https://github.com/XingjianL/AgriRoboSim_ROS).
+6. The project should open, the default level is `MainMenu`, it should contain nothing except a line of text.
+7. The map `tomato_diseases` will be mostly empty (if it does not crash) as the editor cannot find the assets.
+8.  To fill the textures, go to Quixel Megascans to download some materials and plants by `Window -> Quixel Bridge` at the top of the editor. We used a purchased tomato asset [now available on FAB](https://fab.com/s/602393cf0e96). We also used PlantVillage images for tomato disease textures [download](share_link).
+9. The simulation can be run alone, but to control the arm and capture images, I recommend using the [ROS2 repository here with the package `tomato_xarm6`](https://github.com/XingjianL/UE5Sim_colcon_ws).
 
 # Images
 Point cloud reconstructed from the simulation using RGBD images and segmentation masks using 24 setpoints.
