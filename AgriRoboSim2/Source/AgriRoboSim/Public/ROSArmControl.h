@@ -17,7 +17,7 @@ public:
 	TArray<int> JointTopicOrder;	// ur10 is [0, 4, 1, 2, 3, 5]
 
 	UFUNCTION(BlueprintCallable)
-	void InitRobotArm(USkeletalMeshComponent* arm, FName JointProfileName, FName JointCommonBoneName);
+	void InitRobotArm(USkeletalMeshComponent* arm, FName JointProfileName, FName JointCommonBoneName, FString RobotTopicPrefix);
 	UFUNCTION(BlueprintCallable)
 	void Debug();
 	UFUNCTION(BlueprintCallable)
