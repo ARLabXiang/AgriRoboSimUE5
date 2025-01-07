@@ -32,7 +32,7 @@ void UROSArmControl::InitRobotArm(USkeletalMeshComponent* arm, FName JointProfil
 	RJointPosition.Init(10,0);
 	if (!rosinst->ROSIntegrationCore) {return;}
 	R2S_JointState_Topic = NewObject<UTopic>(UTopic::StaticClass());
-	R2S_JointState_Topic->Init(rosinst->ROSIntegrationCore, TEXT("/joint_states"), TEXT("sensor_msgs/JointState"));
+	R2S_JointState_Topic->Init(rosinst->ROSIntegrationCore, TEXT("/ue5/")+RobotTopicPrefix+TEXT("/joint_states"), TEXT("sensor_msgs/JointState"));
 	// ...
 	JointState_SubscribeCallback = [_pos = &RJointPosition, _vel = &RJointVelocity, _name = &RJointNames](TSharedPtr<FROSBaseMsg> msg) -> void
 	{
@@ -57,9 +57,9 @@ void UROSArmControl::InitRobotArm(USkeletalMeshComponent* arm, FName JointProfil
 			*_enabled = true;
 			_transform->SetLocation(
 				FVector(
-					100 * Concrete->translation.x,
-					100 * Concrete->translation.y,
-					100 * Concrete->translation.z
+					Concrete->translation.x,
+					Concrete->translation.y,
+					Concrete->translation.z
 				)
 			);
 			_transform->SetRotation(
@@ -122,82 +122,67 @@ void UROSArmControl::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 void UROSArmControl::SetJointsTargets()
 {
 	#if WITH_EDITOR
-		//UE_LOG(LogTemp, Log, TEXT("%d, %d, %d"),RobotJointMapping.Num(), RJointPosition.Num(), RJointNames.Num())
+		//UE_LOG(LogTemp, Log, TEXT("Set Joint Targets %d, %d, %d"),RobotJointMapping.Num(), RJointPosition.Num(), RJointNames.Num())
 	#endif
+
+	//int _RobotJointMappingNum = RobotJointMapping.Num();
+	// if (_RobotJointMappingNum != _RJointPositionNum ||
+	// 	_RobotJointMappingNum > RJointNames.Num()
+	// 	)
+	// {
+	// 	UE_LOG(LogTemp, Log, TEXT("Joint Count Mismatch, %d, %d, %d"),RobotJointMapping.Num(), RJointPosition.Num(), RJointNames.Num())
+	// 	RobotArm->WakeAllRigidBodies();
+    //        if (bFollowPlatformTopic)
+    //        {
+    //            //UE_LOG(LogTemp, Log, TEXT("Setting Platform Transform"))
+    //            //RobotArm->SetWorldTransform(PlatformTransform, false,nullptr,ETeleportType::TeleportPhysics);
+    //        	RobotArm->SetWorldLocationAndRotation(PlatformTransform.GetLocation(), PlatformTransform.GetRotation(),
+    //        		false,nullptr,ETeleportType::TeleportPhysics);
+    //        }
+	// 	return;
+	// }
+	RobotArm->WakeAllRigidBodies();
+	if (bFollowPlatformTopic)
+	{
+		//RobotArm->SetWorldTransform(PlatformTransform, false,nullptr,ETeleportType::TeleportPhysics);
+		RobotArm->SetWorldLocationAndRotation(PlatformTransform.GetLocation(), PlatformTransform.GetRotation(),
+						false,nullptr,ETeleportType::TeleportPhysics);
+	}
 	int _RJointPositionNum = RJointPosition.Num();
 	if (_RJointPositionNum <= 0)
 	{
 		// joint position not received yet from ros
 		return;
 	}
-	int _RobotJointMappingNum = RobotJointMapping.Num();
-	if (_RobotJointMappingNum > _RJointPositionNum ||
-		_RobotJointMappingNum > RJointNames.Num()	||
-		_RobotJointMappingNum != JointTopicOrder.Num()
-		)
+	for (int ue5_ind = 0; ue5_ind < JointNames_ROS.Num(); ue5_ind++)
 	{
-		//UE_LOG(LogTemp, Log, TEXT("Joint Count Mismatch, %d, %d, %d"),RobotJointMapping.Num(), RJointPosition.Num(), RJointNames.Num())
-		RobotArm->WakeAllRigidBodies();
-        if (bFollowPlatformTopic)
-        {
-            //UE_LOG(LogTemp, Log, TEXT("Setting Platform Transform"))
-            //RobotArm->SetWorldTransform(PlatformTransform, false,nullptr,ETeleportType::TeleportPhysics);
-        	RobotArm->SetWorldLocationAndRotation(PlatformTransform.GetLocation(), PlatformTransform.GetRotation(),
-        		false,nullptr,ETeleportType::TeleportPhysics);
-        }
-		return;
-	}
-	int maxMappingValue = 0;
+		int ros_ind = RJointNames.Find(JointNames_ROS[ue5_ind]);
 
-	for (auto Element : JointTopicOrder)
-	{
-		if (Element > maxMappingValue)
+		// the joint name is found in the topic message
+		if (ros_ind == INDEX_NONE)
 		{
-			maxMappingValue = Element;
+			continue;
 		}
-	}
-	
-	if (maxMappingValue >= _RJointPositionNum)
-	{
-		UE_LOG(LogTemp, Log, TEXT("Joint Mapping Out of Range, %d, %d"),maxMappingValue, RJointPosition.Num())
-		return;
-	}
-	RobotArm->WakeAllRigidBodies();
-	if (bFollowPlatformTopic)
-	{
-		//RobotArm->SetWorldTransform(PlatformTransform, false,nullptr,ETeleportType::TeleportPhysics);
-		RobotArm->SetWorldLocationAndRotation(PlatformTransform.GetLocation(), PlatformTransform.GetRotation(),
-                		false,nullptr,ETeleportType::TeleportPhysics);
-	}
-	for (int i = 0; i < _RobotJointMappingNum; i++)
-	{
-		if (i >= JointTopicOrder.Num() || i >= RobotJointMapping.Num())
+			// set the target
+		for (int i = 0; i < RobotJoints.Num(); i++)
 		{
-			UE_LOG(LogTemp, Log, TEXT("i exceeds after checks"))
-			return;
+			FString joint_name = RobotJoints[i].Get()->JointName.ToString();
+			if (joint_name != JointNames_UE[ue5_ind])
+			{
+				continue;
+			}
+			// UE_LOG(LogTemp, Log, TEXT("%s, %s: %f"), *joint_name, *JointNames_ROS[ue5_ind], RJointPosition[ros_ind])
+            // get the target joint position (angular or linear)
+            if (bLinearJointType[ue5_ind])
+            {
+                FVector target = FVector(RJointPosition[ros_ind], RJointPosition[ros_ind],RJointPosition[ros_ind]);
+                RobotJoints[i].Get()->SetLinearPositionTarget(target);
+                break;
+            }
+            FQuat target = FQuat::MakeFromEuler(FVector(RJointPosition[ros_ind]*180.0f/PI,0,0));
+            RobotJoints[i].Get()->SetAngularOrientationTarget(target);
+            break;
 		}
-		if (JointTopicOrder[i] >= RJointNames.Num() ||
-			RobotJointMapping[i] >= RobotJoints.Num() ||
-			JointTopicOrder[i] >= RJointPosition.Num())
-		{
-			UE_LOG(LogTemp, Log, TEXT("setjointtarget exceeds after checks"))
-			return;
-		}
-		// UE_LOG(LogTemp, Log, TEXT("%s | %s : %f"),
-		// 	*RJointNames[JointTopicOrder[i]],
-		// 	*RobotJoints[RobotJointMapping[i]].Get()->JointName.ToString(),
-		// 	RJointPosition[JointTopicOrder[i]])
-		/*FVector currentLinearForce;
-		FVector currentAngularForce;
-		auto currentLocation1 = RobotJoints[RobotJointMapping[i]].Get()->GetConstraintLocation();
-		auto currentLocation2 = RobotJoints[RobotJointMapping[i]].Get()->GetConstraintLocation();
-		RobotJoints[RobotJointMapping[i]].Get()->GetConstraintForce(currentLinearForce, currentAngularForce);
-		UE_LOG(LogTemp, Log, TEXT("%s | %s"),
-			*currentLocation1.ToString(),
-			*currentLocation2.ToString()
-		)*/
-		FQuat target = FQuat::MakeFromEuler(FVector(RJointPosition[JointTopicOrder[i]]*180.0f/PI,0,0));
-		RobotJoints[RobotJointMapping[i]].Get()->SetAngularOrientationTarget(target);
 	}
 }
 

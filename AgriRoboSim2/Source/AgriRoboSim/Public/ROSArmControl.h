@@ -14,8 +14,11 @@ class AGRIROBOSIM_API UROSArmControl : public UROS2NodeComponent
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<int> JointTopicOrder;	// ur10 is [0, 4, 1, 2, 3, 5]
-
+	TArray<FString> JointNames_ROS;	// joint name in ROS \joint_states // ur10 is [0, 4, 1, 2, 3, 5]
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<FString> JointNames_UE; // joint name in UE5 constraints
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<bool> bLinearJointType; // true if linear, false if angular
 	UFUNCTION(BlueprintCallable)
 	void InitRobotArm(USkeletalMeshComponent* arm, FName JointProfileName, FName JointCommonBoneName, FString RobotTopicPrefix);
 	UFUNCTION(BlueprintCallable)
