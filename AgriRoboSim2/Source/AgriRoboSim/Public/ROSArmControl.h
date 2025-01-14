@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ROS2NodeComponent.h"
+#include "tf2_msgs/TFMessage.h"
 #include "ROSArmControl.generated.h"
 
 
@@ -40,6 +41,9 @@ private:
 	// for ROS
 	UPROPERTY()
 	UTopic* R2S_JointState_Topic;
+	UPROPERTY()
+	UTopic* S2R_RobotState_Topic;
+	TSharedPtr<ROSMessages::tf2_msgs::TFMessage> robot_state_msg;
 	UPROPERTY()//BlueprintReadWrite, VisibleAnywhere)
 	TArray<double> RJointPosition;
 	UPROPERTY()//BlueprintReadWrite, VisibleAnywhere)
@@ -62,7 +66,8 @@ private:
 	TArray<int8> RobotJointMapping;
 	UFUNCTION(BlueprintCallable)
 	void SetJointsTargets();
-
+	UFUNCTION(BlueprintCallable)
+	void PubRobotState();
 	UPROPERTY()
 	UTopic* PlatformTransformsTopic;
 	std::function<void(TSharedPtr<FROSBaseMsg>)> PlatformRobot_SubscribeCallback;

@@ -45,6 +45,10 @@ void UROSArmControl::InitRobotArm(USkeletalMeshComponent* arm, FName JointProfil
 	};
 	R2S_JointState_Topic->Subscribe(JointState_SubscribeCallback);
 
+	S2R_RobotState_Topic = NewObject<UTopic>(UTopic::StaticClass());
+	S2R_RobotState_Topic->Init(rosinst->ROSIntegrationCore, TEXT("/ue5/")+RobotTopicPrefix+TEXT("/robot_state"), TEXT("tf2_msgs/TFMessage"));
+	S2R_RobotState_Topic->Advertise();
+	
 	PlatformTransformsTopic = NewObject<UTopic>(UTopic::StaticClass());
 	FString planar_topic_name = TEXT("/ue5/")+RobotTopicPrefix+TEXT("/planar_robot_tf");
 	UE_LOG(LogTemp, Log, TEXT("%s"),*planar_topic_name)
@@ -107,7 +111,7 @@ UROSArmControl::UROSArmControl()
 void UROSArmControl::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	robot_state_msg = MakeShareable(new ROSMessages::tf2_msgs::TFMessage());
 	
 }
 
@@ -185,4 +189,30 @@ void UROSArmControl::SetJointsTargets()
 		}
 	}
 }
+void UROSArmControl::PubRobotState()
+{
+	ROSMessages::geometry_msgs::TransformStamped base_transform;
+	FVector base_transforms_loc = FVector(0, 0, 0);
+	FQuat base_transforms_rot = FQuat(0, 0, 0, 1);
+	RobotArm->GetSocketWorldLocationAndRotation("base_socket", base_transforms_loc, base_transforms_rot);
 
+	FVector cam_transforms_loc = FVector(0, 0, 0);
+	FQuat cam_transforms_rot = FQuat(0, 0, 0, 1);
+	RobotArm->GetSocketWorldLocationAndRotation("camera_socket", cam_transforms_loc, cam_transforms_rot);
+	//robot_state_msg->transforms.Reset();
+	robot_state_msg->transforms.Init(base_transform,2);
+	robot_state_msg->transforms[0].header.frame_id = "base_link";
+	robot_state_msg->transforms[1].header.frame_id = "camera_link";
+	robot_state_msg->transforms[0].header.time = FROSTime::Now();
+	robot_state_msg->transforms[1].header.time = robot_state_msg->transforms[0].header.time;
+	robot_state_msg->transforms[0].transform.translation = base_transforms_loc;
+	robot_state_msg->transforms[0].transform.rotation = base_transforms_rot;
+	robot_state_msg->transforms[1].transform.translation = cam_transforms_loc;
+	robot_state_msg->transforms[1].transform.rotation = cam_transforms_rot;
+	if (!S2R_RobotState_Topic)
+	{
+		return;
+	}
+	S2R_RobotState_Topic->Publish(robot_state_msg);
+
+}
