@@ -29,6 +29,18 @@ public:
 	// Sets default values for this component's properties
 	UROSArmControl();
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	TArray<double> RJointPosition;
+	UPROPERTY()//BlueprintReadWrite, VisibleAnywhere)
+	TArray<double> RJointVelocity;
+	UPROPERTY()//BlueprintReadWrite, VisibleAnywhere)
+	TArray<double> RJointEffort;
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	TArray<FString> RJointNames;
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	FTransform PlatformTransform;
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	bool bFollowPlatformTopic;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -44,14 +56,7 @@ private:
 	UPROPERTY()
 	UTopic* S2R_RobotState_Topic;
 	TSharedPtr<ROSMessages::tf2_msgs::TFMessage> robot_state_msg;
-	UPROPERTY()//BlueprintReadWrite, VisibleAnywhere)
-	TArray<double> RJointPosition;
-	UPROPERTY()//BlueprintReadWrite, VisibleAnywhere)
-	TArray<double> RJointVelocity;
-	UPROPERTY()//BlueprintReadWrite, VisibleAnywhere)
-	TArray<double> RJointEffort;
-	UPROPERTY()//BlueprintReadWrite, VisibleAnywhere)
-	TArray<FString> RJointNames;
+
 	std::function<void(TSharedPtr<FROSBaseMsg>)> JointState_SubscribeCallback;
 	template<typename T>
 	static void R2S_Helper(TArray<T> ROS, TArray<T>* Sim);
@@ -71,9 +76,8 @@ private:
 	UPROPERTY()
 	UTopic* PlatformTransformsTopic;
 	std::function<void(TSharedPtr<FROSBaseMsg>)> PlatformRobot_SubscribeCallback;
-	UPROPERTY()
-	bool bFollowPlatformTopic;
-	FTransform PlatformTransform;
+
+	
 };
 
 template <typename T>

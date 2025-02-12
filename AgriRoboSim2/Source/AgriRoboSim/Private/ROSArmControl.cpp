@@ -128,23 +128,7 @@ void UROSArmControl::SetJointsTargets()
 	#if WITH_EDITOR
 		//UE_LOG(LogTemp, Log, TEXT("Set Joint Targets %d, %d, %d"),RobotJointMapping.Num(), RJointPosition.Num(), RJointNames.Num())
 	#endif
-
-	//int _RobotJointMappingNum = RobotJointMapping.Num();
-	// if (_RobotJointMappingNum != _RJointPositionNum ||
-	// 	_RobotJointMappingNum > RJointNames.Num()
-	// 	)
-	// {
-	// 	UE_LOG(LogTemp, Log, TEXT("Joint Count Mismatch, %d, %d, %d"),RobotJointMapping.Num(), RJointPosition.Num(), RJointNames.Num())
-	// 	RobotArm->WakeAllRigidBodies();
-    //        if (bFollowPlatformTopic)
-    //        {
-    //            //UE_LOG(LogTemp, Log, TEXT("Setting Platform Transform"))
-    //            //RobotArm->SetWorldTransform(PlatformTransform, false,nullptr,ETeleportType::TeleportPhysics);
-    //        	RobotArm->SetWorldLocationAndRotation(PlatformTransform.GetLocation(), PlatformTransform.GetRotation(),
-    //        		false,nullptr,ETeleportType::TeleportPhysics);
-    //        }
-	// 	return;
-	// }
+	
 	RobotArm->WakeAllRigidBodies();
 	if (bFollowPlatformTopic)
 	{
@@ -152,16 +136,18 @@ void UROSArmControl::SetJointsTargets()
 		RobotArm->SetWorldLocationAndRotation(PlatformTransform.GetLocation(), PlatformTransform.GetRotation(),
 						false,nullptr,ETeleportType::TeleportPhysics);
 	}
+	
 	int _RJointPositionNum = RJointPosition.Num();
 	if (_RJointPositionNum <= 0)
 	{
 		// joint position not received yet from ros
 		return;
 	}
+	
 	for (int ue5_ind = 0; ue5_ind < JointNames_ROS.Num(); ue5_ind++)
 	{
 		int ros_ind = RJointNames.Find(JointNames_ROS[ue5_ind]);
-
+		UE_LOG(LogTemp, Log, TEXT("%d number joints, %d"), RJointNames.Num(), JointNames_ROS.Num())
 		// the joint name is found in the topic message
 		if (ros_ind == INDEX_NONE)
 		{
