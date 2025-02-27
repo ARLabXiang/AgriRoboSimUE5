@@ -19,7 +19,7 @@ void UROSCameraControl::InitROSTopics(
 	UCameraComponent* CameraModel, int Width, int Height)
 {
 	SceneCaptures.Empty();
-	if (!rosinst->ROSIntegrationCore) {return;}
+	//if (!rosinst->ROSIntegrationCore) {return;}
 	for (auto Element : CameraTypePair)
 	{
 		InitSceneCapture(Element.Key, Element.Value);
@@ -130,7 +130,7 @@ void UROSCameraControl::PublishAllTopic()
 {
 	for (auto SceneCapture : SceneCaptures)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Publishing: %s, %s"), *SceneCapture->SceneCapture->GetName(),*SceneCapture->Topic->GetTopicName())
+		//UE_LOG(LogTemp, Log, TEXT("Publishing: %s, %s"), *SceneCapture->SceneCapture->GetName(),*SceneCapture->Topic->GetTopicName())
 		SceneCapture->Publish();
 	}
 }

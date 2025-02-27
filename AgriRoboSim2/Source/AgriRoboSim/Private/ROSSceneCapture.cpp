@@ -45,10 +45,6 @@ void UROSSceneCapture::Initialize(
 {
 	topic_name = topic_name_;
 	UE_LOG(LogTemp, Log, TEXT("A %s"),*topic_name)
-	if (!rosinst->ROSIntegrationCore) {return;}
-	Topic = NewObject<UTopic>(UTopic::StaticClass());
-	Topic->Init(rosinst->ROSIntegrationCore, topic_name, TEXT("sensor_msgs/Image"));
-	Topic->Advertise();
 	SceneCapture = SceneCapture_;
 	CaptureType = CaptureType_;
 	switch (CaptureType)
@@ -65,6 +61,10 @@ void UROSSceneCapture::Initialize(
 	default:
 		break;
 	}
+	if (!rosinst->ROSIntegrationCore) {return;}
+	Topic = NewObject<UTopic>(UTopic::StaticClass());
+	Topic->Init(rosinst->ROSIntegrationCore, topic_name, TEXT("sensor_msgs/Image"));
+	Topic->Advertise();
 }
 
 /**
@@ -127,7 +127,7 @@ void UROSSceneCapture::Publish(TArray<T>* Image)
 	{
 		//UE_LOG(LogTemp, Log, TEXT("publishing, %d, %p, %d"), Image->Num(), img.get(), img.get()!=nullptr)
 		Topic->Publish(ImageMSG);
-		UE_LOG(LogTemp, Log, TEXT("published"))
+		//UE_LOG(LogTemp, Log, TEXT("published"))
 		return;
 	}
 	UE_LOG(LogTemp, Log, TEXT("failed publish"))
