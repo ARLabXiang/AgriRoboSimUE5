@@ -81,6 +81,7 @@ ThirdParty/OpenCV/*
 
 # Licensed Assets
 Content/GoodSky/*
+Content/Unused/*
 
 # Pixelstreaming sample
 Samples/*

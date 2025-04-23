@@ -208,6 +208,10 @@ void UROSSceneCapture::ReadRenderTargetPerRHI()
 		[RenderTargetResource, this, RenderTarget]()
 	{
 		//UE_LOG(LogTemp, Log, TEXT("AsyncTask"))
+		if (!RenderTargetResource)
+		{
+			return;
+		}
 		switch (RenderTargetResource->GetRenderTargetTexture()->GetDesc().Format)
 		{
 		case PF_B8G8R8A8:
