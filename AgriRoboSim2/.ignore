@@ -1,0 +1,12 @@
+/.idea
+/.vs
+/.vscode
+/Content
+/DerivedDataCache
+/Intermediate
+/Samples
+/Saved
+/Plugins/ROSIntegration/.git
+/Plugins/ROSIntegration/Documentation
+/Plugins/ROSIntegration/Intermediate
+/Plugins/ROSIntegration/ThirdParty
