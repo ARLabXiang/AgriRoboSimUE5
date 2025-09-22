@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "5.4",
+	"EngineAssociation": "5.6",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -10,8 +10,7 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"Engine",
-				"ROSIntegration",
-				"TcpSocketPlugin"
+				"ROSIntegration"
 			]
 		}
 	],
@@ -71,11 +70,6 @@
 		{
 			"Name": "PCG",
 			"Enabled": true
-		},
-		{
-			"Name": "TcpSocketPlugin",
-			"Enabled": true,
-			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/462c2952e71c4548ae324cb624c74aa6"
 		},
 		{
 			"Name": "PhysicsControl",
