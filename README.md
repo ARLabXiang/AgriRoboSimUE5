@@ -4,7 +4,7 @@ This repo host the Unreal Engine 5 part for the simulation, there is a seperate 
 
 `AgriRoboSim2` contains the current project in development using UE5.4.
 
-*Important*: Most assets are not part of this repository. Send `xli228@ncsu.edu` an email for the processed PlantVillage Dataset images. The tomato mesh were purchased and we cannot redistribute per license.
+*Important*: Most assets are not part of this repository per license.
 
 If you want to use the available synthetic images you can download them on [HuggingFace (compressed to 160GB)](https://huggingface.co/datasets/XingjianLi/tomatotest). Or original images on [Globus (750GB)](https://app.globus.org/file-manager?origin_id=2f7f6170-8d5c-11e9-8e6a-029d279f7e24&origin_path=%2Frsstu%2Fusers%2Fl%2Flxiang3%2FTomatoDiseasePhenotyping%2F). The quality difference is not much as detailed on HuggingFace.
 
